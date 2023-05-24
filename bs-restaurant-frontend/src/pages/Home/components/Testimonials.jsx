@@ -14,7 +14,7 @@ const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    fetch("./Data/reviews.json")
+    fetch(`${import.meta.env.VITE_ULR}reviews`)
       .then((res) => res.json())
       .then((data) => setReviews(data));
   }, []);

@@ -4,7 +4,7 @@ const useMenu = () => {
     const [menu, setMenu] = useState([]);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-        fetch('./Data/menu.json')
+        fetch(`${import.meta.env.VITE_ULR}menu`)
             .then(res => res.json())
             .then(data => {
                 setMenu(data);
