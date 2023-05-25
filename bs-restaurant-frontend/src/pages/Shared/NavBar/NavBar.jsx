@@ -1,24 +1,47 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-
-const navOptions = (
-  <>
-    <li>
-      <NavLink to={`/`}>Home</NavLink>
-    </li>
-    <li>
-      <NavLink to={`/menu`}>Our Menu</NavLink>
-    </li>
-    <li>
-    <NavLink to={`/order`}>Order Food</NavLink>
-    </li>
-    <li>
-    <NavLink to={`/login`}>Login</NavLink>
-    </li>
-  </>
-);
+import React, { useContext } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../../../providers/AuthProvider";
 
 const NavBar = () => {
+  const { user, logOut } = useContext(AuthContext);
+
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => console.log(error));
+  };
+
+  const navOptions = (
+    <>
+      <li>
+        <NavLink to={`/`}>Home</NavLink>
+      </li>
+      <li>
+        <NavLink to={`/menu`}>Our Menu</NavLink>
+      </li>
+      <li>
+        <NavLink to={`/order`}>Order Food</NavLink>
+      </li>
+      <li>
+        <NavLink to={`/secret`}>Secret</NavLink>
+      </li>
+      {user ? (
+        <>
+          <span>{user?.displayName}</span>
+          <button onClick={handleLogOut} className="btn btn-ghost">
+            LogOut
+          </button>
+        </>
+      ) : (
+        <>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        </>
+      )}
+    </>
+  );
+
   return (
     <div className="navbar fixed z-10 opacity-70 bg-black text-white max-w-screen-xl">
       <div className="navbar-start">

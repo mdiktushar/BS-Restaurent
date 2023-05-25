@@ -14,6 +14,8 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const from = location.state?.from?.pathname || "/";
+
   useEffect(() => {
     loadCaptchaEnginge(6);
   }, []);
@@ -27,16 +29,16 @@ const Login = () => {
     signIn(email, password).then((result) => {
       const user = result.user;
       console.log(user);
-      // Swal.fire({
-      //     title: 'User Login Successful.',
-      //     showClass: {
-      //         popup: 'animate__animated animate__fadeInDown'
-      //     },
-      //     hideClass: {
-      //         popup: 'animate__animated animate__fadeOutUp'
-      //     }
-      // });
-      // navigate(from, { replace: true });
+      Swal.fire({
+          title: 'User Login Successful.',
+          showClass: {
+              popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+              popup: 'animate__animated animate__fadeOutUp'
+          }
+      });
+      navigate(from, { replace: true });
     });
   };
 
