@@ -12,6 +12,9 @@ const navOptions = (
     <li>
     <NavLink to={`/order`}>Order Food</NavLink>
     </li>
+    <li>
+    <NavLink to={`/login`}>Login</NavLink>
+    </li>
   </>
 );
 
