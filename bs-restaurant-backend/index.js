@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const cors = require('cors');
-require('dotenv').config()
+const cors = require("cors");
+require("dotenv").config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // middleware
 app.use(cors());
@@ -16,7 +16,7 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 async function run() {
   try {
@@ -24,21 +24,55 @@ async function run() {
     await client.connect();
 
     const menuCollection = client.db("bistroDb").collection("menu");
+    const usersCollection = client.db("bistroDb").collection("users");
     const reviewCollection = client.db("bistroDb").collection("reviews");
     const cartCollection = client.db("bistroDb").collection("carts");
 
-    app.get('/menu', async(req, res) =>{
-        const result = await menuCollection.find().toArray();
-        res.send(result);
-    })
-    
-    app.get('/reviews', async(req, res) =>{
-        const result = await reviewCollection.find().toArray();
-        res.send(result);
-    })
+    // Warning: use verifyJWT before using verifyAdmin
+
+    /**
+     * 0. do not show secure links to those who should not see the links
+     * 1. use jwt token: verifyJWT
+     * 2. use verifyAdmin middleware
+     */
+    // users related apis
+    // users related apis
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email };
+      const existingUser = await usersCollection.findOne(query);
+
+      if (existingUser) {
+        return res.send({ message: "user already exists" });
+      }
+
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // security layer: verifyJWT
+    // email same
+    // check admin
+
+    // menu related apis
+    app.get("/menu", async (req, res) => {
+      const result = await menuCollection.find().toArray();
+      res.send(result);
+    });
+
+    // review related apis
+    app.get("/reviews", async (req, res) => {
+      const result = await reviewCollection.find().toArray();
+      res.send(result);
+    });
 
     // cart collection apis
-    app.get('/carts', async (req, res) => {
+    app.get("/carts", async (req, res) => {
       const email = req.query.email;
 
       if (!email) {
@@ -49,24 +83,25 @@ async function run() {
       res.send(result);
     });
 
-    app.post('/carts', async (req, res) => {
+    app.post("/carts", async (req, res) => {
       const item = req.body;
       console.log(item);
       const result = await cartCollection.insertOne(item);
       res.send(result);
-    })
+    });
 
-    app.delete('/carts/:id', async (req, res) => {
+    app.delete("/carts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await cartCollection.deleteOne(query);
       res.send(result);
-    })
-
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -74,15 +109,13 @@ async function run() {
 }
 run().catch(console.dir);
 
-
-app.get('/', (req, res) => {
-    res.send('boss is sitting')
-})
+app.get("/", (req, res) => {
+  res.send("boss is sitting");
+});
 
 app.listen(port, () => {
-    console.log(`Bistro boss is sitting on port ${port}`);
-})
-
+  console.log(`Bistro boss is sitting on port ${port}`);
+});
 
 /**
  * --------------------------------
@@ -95,4 +128,4 @@ app.listen(port, () => {
  * app.patch('/users/:id')
  * app.put('/users/:id')
  * app.delete('/users/:id')
-*/
+ */
