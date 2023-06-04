@@ -6,6 +6,7 @@ VITE_STORAGEBUCKET = ""
 VITE_MESSAGINGSENDERID = ""
 VITE_APPID = ""
 VITE_Image_Upload_token = ""
+VITE_Payment_Gateway_PK = ""
 
 # Backend 
 VITE_ULR = 'http://localhost:5000/'
